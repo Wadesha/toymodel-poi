@@ -160,15 +160,17 @@ footer{margin-top:60px;padding-top:18px;border-top:1px solid var(--border);color
   <a href="#s11">数据总览</a>
   <a href="#s12">省份分布</a>
   <a href="#s13">分类分布</a>
+  <a href="#s14">空间分布（地图）</a>
   <a href="#ch2">2 · 实现方法（跟做）</a>
   <a href="#s21">准备什么</a>
   <a href="#s22">认识 3 个文件</a>
   <a href="#s23">20 行代码跑起来</a>
   <a href="#s24">逐行讲解</a>
-  <a href="#s25">本地运行</a>
-  <a href="#s26">发布上线</a>
-  <a href="#s27">完整版多了什么</a>
-  <a href="#s28">动手练习</a>
+  <a href="#s25">地图三步进阶</a>
+  <a href="#s26">本地运行</a>
+  <a href="#s27">发布上线</a>
+  <a href="#s28">完整版多了什么</a>
+  <a href="#s29">动手练习</a>
   <a href="#ch3">3 · 常见问题</a>
 </aside>
 
@@ -186,7 +188,7 @@ footer{margin-top:60px;padding-top:18px;border-top:1px solid var(--border);color
   </div>
   <div class="hero-cta">
     <a class="btn btn-primary" href="#ch0">从第 0 章开始 →</a>
-    <a class="btn btn-ghost" href="#ch1">直接看分析结果</a>
+    <a class="btn btn-ghost" href="#s14">直接看地图演示</a>
   </div>
 </div>
 
@@ -244,7 +246,7 @@ footer{margin-top:60px;padding-top:18px;border-top:1px solid var(--border);color
     <div class="cp-title">省份 POI 数量 TOP 10</div>
     <div class="cp-sub">统计方式：遍历 22,001 条记录，按省份索引累加计数（代码见下方）</div>
     <div id="provChart" class="chart"></div>
-    <div id="provErr" class="chart-err" style="display:none">图表加载失败——你是不是直接双击打开的这个网页？<br>请按 <a href="#s25">2.5 节</a> 启动本地服务后再看。</div>
+    <div id="provErr" class="chart-err" style="display:none">图表加载失败——你是不是直接双击打开的这个网页？<br>请按 <a href="#s26">2.6 节</a> 启动本地服务后再看。</div>
   </div>
 
   <div class="findings">
@@ -269,7 +271,7 @@ d.points.forEach(p =&gt; {
     <div class="cp-title">17 类 POI 的数量分布（模拟覆盖 16 类）</div>
     <div class="cp-sub">同样的分组计数，只是这次按分类索引 p[2] 统计</div>
     <div id="catChart" class="chart"></div>
-    <div id="catErr" class="chart-err" style="display:none">图表加载失败——请按 <a href="#s25">2.5 节</a> 通过本地服务访问本页。</div>
+    <div id="catErr" class="chart-err" style="display:none">图表加载失败——请按 <a href="#s26">2.6 节</a> 通过本地服务访问本页。</div>
   </div>
 
   <div class="findings">
@@ -280,7 +282,21 @@ d.points.forEach(p =&gt; {
     </ol>
   </div>
 
-  <div class="callout ok"><span class="ct">1.4 一句话总结分析结果</span>这是一张<strong>按真实分布比例生成的「缩小版」中国 POI 全景图</strong>：数量上广东领跑、东南沿海密集；结构上基础民生类占近半、专业类呈长尾。它验证了「模拟数据 + 轻量前端」足以承载真实数据的可视化原型——后续接真实数据时，只需替换 JSON 文件，页面代码一行不用改。</div>
+  <h3 id="s14">1.4 分析三：点位铺回地图上是什么样？<span class="tag">地图展示</span></h3>
+  <div class="chart-panel">
+    <div class="cp-title">22,001 个 POI 的空间分布（本页现场渲染）</div>
+    <div class="cp-sub">滚轮缩放 · 拖拽平移 · 悬停查看 —— 这正是第 2 章要带你亲手做出来的东西</div>
+    <div id="mapCh1" class="chart" style="height:480px"></div>
+  </div>
+  <div class="findings">
+    <ol>
+      <li><span class="hl">亮区即密度</span>：长三角、珠三角、京津冀、成渝四大城市群最亮——与 1.2 的省份排名（广东/江苏/山东/浙江…）完全对应。</li>
+      <li><span class="hl">一条隐形分界线</span>：从东北黑河到西南腾冲画一条线，点位明显集中在东南半壁——这就是地理学著名的<strong>「胡焕庸线」</strong>，模拟数据忠实还原了真实中国的人口与设施分布规律。</li>
+      <li><span class="hl">为什么要用地图看数据</span>：表格里「广东 9.6%」只是一个数字；铺到地图上，一眼就看出「多在哪、为什么多、和邻居什么关系」——这是空间可视化相对柱状图的独特价值。</li>
+    </ol>
+  </div>
+
+  <div class="callout ok"><span class="ct">1.5 一句话总结分析结果</span>这是一张<strong>按真实分布比例生成的「缩小版」中国 POI 全景图</strong>：数量上广东领跑、东南沿海密集；结构上基础民生类占近半、专业类呈长尾。它验证了「模拟数据 + 轻量前端」足以承载真实数据的可视化原型——后续接真实数据时，只需替换 JSON 文件，页面代码一行不用改。</div>
 </section>
 
 <!-- ============ 第 2 章 ============ -->
@@ -293,7 +309,7 @@ d.points.forEach(p =&gt; {
     <tr><th>类别</th><th>清单</th><th>说明</th></tr>
     <tr><td><strong>必需</strong></td><td>一台电脑 · 一个现代浏览器（Chrome/Edge）· 一个 GitHub 账号</td><td>GitHub 免费注册：<a href="https://github.com/signup" target="_blank">github.com/signup</a>，只需邮箱</td></tr>
     <tr><td><strong>推荐</strong></td><td>VS Code（代码编辑器）</td><td><a href="https://code.visualstudio.com" target="_blank">code.visualstudio.com</a> 免费下载，装完一路下一步</td></tr>
-    <tr><td><strong>不需要</strong></td><td>服务器 · 数据库 · 付费软件 · 任何安装型编程环境</td><td>本地预览优先用 VS Code 插件方案（见 2.5），Python 只是备选</td></tr>
+    <tr><td><strong>不需要</strong></td><td>服务器 · 数据库 · 付费软件 · 任何安装型编程环境</td><td>本地预览优先用 VS Code 插件方案（见 2.6），Python 只是备选</td></tr>
   </table>
 
   <h3 id="s22">2.2 认识 3 个文件<span class="tag">整个网站就这 3 个</span></h3>
@@ -361,6 +377,14 @@ d.points.forEach(p =&gt; {
   &lt;/script&gt;
 &lt;/body&gt;
 &lt;/html&gt;</pre></div>
+
+  <p style="margin-top:18px">👇 粘贴保存并按 <a href="#s26">2.6 节</a> 运行后，你看到的就是下面这样——<strong>本页现场渲染的真实效果</strong>，可以滚轮缩放、拖拽平移：</p>
+  <div class="chart-panel">
+    <div class="cp-title">mini.html 的运行效果</div>
+    <div class="cp-sub">省界轮廓 + 22,001 个蓝色散点，和你电脑上跑出来的应当一模一样（默认浅灰配色——完整版才调成深色，见 2.8 节）</div>
+    <div id="demoMini" class="chart" style="height:420px"></div>
+  </div>
+
   <div class="callout warn"><span class="ct">⚠ 保存时的两个常见坑</span>① 编码必须是 <strong>UTF-8</strong>（VS Code 右下角可见，默认就是）；② 文件名后缀是 <code>.html</code> 不是 <code>.html.txt</code>（Windows 需在「查看」中勾选「文件扩展名」确认）。另外它必须和两个 json 文件<strong>放在同一个文件夹</strong>。</div>
 
   <h3 id="s24">2.4 逐行讲解：这 20 行在干什么</h3>
@@ -376,9 +400,94 @@ d.points.forEach(p =&gt; {
     <tr><td><code>poi.points.map(p =&gt; [p[3], p[4]])</code></td><td>把 22,001 条记录各取第 4、5 列（索引 3、4），组装成 22,001 个 <code>[经度,纬度]</code></td></tr>
     <tr><td><code>chart.setOption({...})</code></td><td>ECharts 是<strong>声明式</strong>的：你只管「描述」图长什么样（地图 + 散点 + 颜色），怎么画它负责。想改图？改完描述再 setOption 一次即可</td></tr>
   </table>
-  <div class="callout ok"><span class="ct">✅ 检查点：看到什么算成功？</span>一张深色中国地图轮廓，上面铺满蓝色小点，滚轮可缩放、拖拽可平移。这就是全部核心原理了——完整版的筛选、统计只是在这 20 行外面「加壳」。</div>
+  <div class="callout ok"><span class="ct">✅ 检查点：看到什么算成功？</span>一张中国地图轮廓（ECharts 默认浅灰配色）铺满蓝色小点，滚轮可缩放、拖拽可平移——和上面演示一致。这就是全部核心原理了——完整版的筛选、统计、深色主题只是在这 20 行外面「加壳」。</div>
 
-  <h3 id="s25">2.5 在本地跑起来<span class="tag">关键一步</span></h3>
+  <h3 id="s25">2.5 地图是怎么画出来的：三步进阶<span class="tag">实现方式</span></h3>
+  <p>2.3 的 20 行代码一口气画出了整张地图，现在把它拆开，看<strong>地图本身</strong>是怎么一步步长出来的。每个阶段「代码在上、效果在下」——效果都是本页<strong>现场渲染</strong>的真实 ECharts 实例，对照着看比读十遍文字都清楚。</p>
+
+  <div class="step"><div class="step-num">1</div><div class="step-body">
+    <div class="st">先有底图：registerMap + geo 组件</div>
+    <p><code>china_mainland.json</code> 是一份 GeoJSON——每个省是一个 Feature，<code>coordinates</code> 里是一串沿边界排布的经纬度点，「连线成面」勾出省界：</p>
+    <div class="code"><div class="code-head"><span class="fn">china_mainland.json 的结构（示意）</span><button class="copy-btn">复制</button></div>
+<pre>{
+  <span class="st">"type"</span>: <span class="st">"FeatureCollection"</span>,
+  <span class="st">"features"</span>: [
+    {
+      <span class="st">"type"</span>: <span class="st">"Feature"</span>,
+      <span class="st">"properties"</span>: { <span class="st">"name"</span>: <span class="st">"广东省"</span> },
+      <span class="st">"geometry"</span>: {
+        <span class="st">"type"</span>: <span class="st">"Polygon"</span>,
+        <span class="st">"coordinates"</span>: [ [ [110.36, 21.28], [110.42, 21.31], ... ] ]  <span class="cm">// 边界点串</span>
+      }
+    }
+    <span class="cm">// ... 共 34 个省级行政区，每个都是一个 Feature</span>
+  ]
+}</pre></div>
+    <p>两行代码把它变成地图：先 <code>registerMap</code> 登记，再在 option 里用 <code>geo</code> 组件按名字调取：</p>
+    <div class="code"><div class="code-head"><span class="fn">第 1 步：注册并铺出底图</span><button class="copy-btn">复制</button></div>
+<pre>echarts.registerMap(<span class="st">'china'</span>, china);   <span class="cm">// ① 登记：给这份边界数据起名叫 'china'</span>
+chart.setOption({
+  geo: {                                <span class="cm">// ② geo 组件：按名字调取，铺成底图</span>
+    map: <span class="st">'china'</span>,
+    roam: <span class="kw">true</span>,                         <span class="cm">// 允许缩放、拖拽</span>
+    itemStyle: { areaColor: <span class="st">'#1b2436'</span>, borderColor: <span class="st">'#3a4659'</span> },
+    label: { show: <span class="kw">false</span> }              <span class="cm">// 先不显示省名</span>
+  }
+});</pre></div>
+    <div class="chart-panel">
+      <div class="cp-title">第 1 步效果：一张空地图</div>
+      <div class="cp-sub">还没有任何数据，只是省界轮廓——但已经能缩放、拖拽了</div>
+      <div id="stage1" class="chart" style="height:300px"></div>
+    </div>
+  </div></div>
+
+  <div class="step"><div class="step-num">2</div><div class="step-body">
+    <div class="st">叠上数据：geo 坐标系里的 scatter</div>
+    <p>把 22,001 个点「钉」上去只差一个配置：<code>coordinateSystem: 'geo'</code>——告诉 ECharts「这批散点的坐标是经纬度，请对齐底图定位」。数据就是最朴素的 <code>[经度, 纬度]</code> 数组：</p>
+    <div class="code"><div class="code-head"><span class="fn">第 2 步：叠加散点层</span><button class="copy-btn">复制</button></div>
+<pre>chart.setOption({
+  geo: { map: <span class="st">'china'</span>, roam: <span class="kw">true</span> },           <span class="cm">// 底图（同第 1 步）</span>
+  series: [{
+    type: <span class="st">'scatter'</span>,                       <span class="cm">// 散点图层</span>
+    coordinateSystem: <span class="st">'geo'</span>,              <span class="cm">// ★ 关键：坐标是经纬度，对齐底图定位</span>
+    data: [ [121.65, 31.25], [121.26, 30.87], ... ],  <span class="cm">// [经度, 纬度] 数组</span>
+    symbolSize: 4,
+    itemStyle: { color: <span class="st">'#58a6ff'</span>, opacity: .7 }
+  }]
+});</pre></div>
+    <div class="chart-panel">
+      <div class="cp-title">第 2 步效果：地图 + 散点</div>
+      <div class="cp-sub">这就是 mini 版的全部——「一张图」其实是「底图 + 散点层」两层叠出来的</div>
+      <div id="stage2" class="chart" style="height:300px"></div>
+    </div>
+  </div></div>
+
+  <div class="step"><div class="step-num">3</div><div class="step-body">
+    <div class="st">加上交互：tooltip + emphasis</div>
+    <p>静态图只能「看」，再加两段配置就有了「对话」：<code>tooltip</code> 决定悬停时显示什么（<code>formatter</code> 里自己拼 HTML），<code>emphasis</code> 决定悬停时点变成什么颜色。<strong>把鼠标放到下面的点上试试：</strong></p>
+    <div class="code"><div class="code-head"><span class="fn">第 3 步：加交互</span><button class="copy-btn">复制</button></div>
+<pre>chart.setOption({
+  geo: { map: <span class="st">'china'</span>, roam: <span class="kw">true</span> },
+  tooltip: {                                        <span class="cm">// ① 悬停时显示什么</span>
+    formatter: p =&gt; <span class="st">'&lt;b&gt;'</span> + p.data.name + <span class="st">'&lt;/b&gt;&lt;br&gt;'</span> + p.data.value[2]
+  },
+  series: [{
+    type: <span class="st">'scatter'</span>, coordinateSystem: <span class="st">'geo'</span>,
+    data: points,                                   <span class="cm">// 每个点带上 name 与详情文字</span>
+    symbolSize: 4,
+    itemStyle: { color: <span class="st">'#58a6ff'</span>, opacity: .7 },
+    emphasis: { itemStyle: { color: <span class="st">'#ff6a3d'</span> } }   <span class="cm">// ② 悬停时变橙</span>
+  }]
+});</pre></div>
+    <div class="chart-panel">
+      <div class="cp-title">第 3 步效果：可交互的地图</div>
+      <div class="cp-sub">悬停任意点 → 橙色高亮 + 显示「名称 · 分类」</div>
+      <div id="stage3" class="chart" style="height:340px"></div>
+    </div>
+    <div class="callout ok"><span class="ct">到这里你已掌握全部核心</span>index.html 完整版用到的地图技术到此为止——剩下的筛选器、统计卡片、深色主题，都是「改数据重画 + 调样式」的重复劳动（见 2.8 节拆解）。</div>
+  </div></div>
+
+  <h3 id="s26">2.6 在本地跑起来<span class="tag">关键一步</span></h3>
   <div class="callout warn"><span class="ct">⚠ 为什么不能直接双击 mini.html？</span>双击 = <code>file://</code> 协议。出于安全策略，浏览器在 <code>file://</code> 下<strong>禁止 fetch 本地文件</strong>，控制台（按 F12 打开）会报 CORS 错误，页面地图空白。必须通过 <code>http://</code> 访问——需要一个「本地小服务器」。下面三种任选其一：</div>
 
   <div class="step"><div class="step-num">A</div><div class="step-body">
@@ -409,7 +518,7 @@ py -m http.server 8000</pre></div>
 <pre>npx serve .          <span class="cm"># 会给出一个可访问的地址，浏览器打开即可</span></pre></div>
   </div></div>
 
-  <h3 id="s26">2.6 发布上线：让全世界访问你的网站<span class="tag">GitHub Pages</span></h3>
+  <h3 id="s27">2.7 发布上线：让全世界访问你的网站<span class="tag">GitHub Pages</span></h3>
   <p>两条路线任选。<strong>路线 1 全程点鼠标</strong>（零基础推荐）；路线 2 用 git 命令（以后会常用，可以下次再学）。</p>
 
   <div class="card">
@@ -432,7 +541,7 @@ git push                                                   <span class="cm"># �
     <p style="font-size:13px;color:var(--muted)">以后每次改动本地文件，重复 add → commit → push 三步，网站约 1 分钟后自动更新。</p>
   </div>
 
-  <h3 id="s27">2.7 完整版 index.html 比 mini 版多了什么？</h3>
+  <h3 id="s28">2.8 完整版 index.html 比 mini 版多了什么？</h3>
   <table>
     <tr><th>功能</th><th>实现思路</th></tr>
     <tr><td><strong>筛选器</strong>（分类/省份下拉 + 密度滑块）</td><td>原生 <code>&lt;select&gt;</code>/<code>&lt;input&gt;</code>，切换时触发 <code>render()</code> 重新过滤数据并 <code>setOption</code>——「改条件 → 重画」，声明式库的好处在此</td></tr>
@@ -440,9 +549,10 @@ git push                                                   <span class="cm"># �
     <tr><td><strong>统计卡片</strong></td><td>筛选后同步更新「当前展示点」数字，就是分组计数的活学活用</td></tr>
     <tr><td><strong>悬浮详情</strong></td><td>tooltip 的 <code>formatter</code> 回调：鼠标停在哪，就拼一段「名称 · 分类 · 省份」的 HTML 显示</td></tr>
     <tr><td><strong>简称转全称</strong></td><td>数据里存「广东」，地图边界里叫「广东省」——用 <code>PROV_FULL</code> 对照表翻译</td></tr>
+    <tr><td><strong>深色主题</strong></td><td>geo 的 <code>itemStyle</code> 设 <code>areaColor</code>/<code>borderColor</code>，页面配色用 CSS 变量统一管理——mini 版的浅灰默认脸就这样换成深色</td></tr>
   </table>
 
-  <h3 id="s28">2.8 动手练习（附答案）</h3>
+  <h3 id="s29">2.9 动手练习（附答案）</h3>
   <p style="color:var(--muted)">在 mini.html 上改，每题 2~5 分钟。改完保存刷新即可见效，改坏了重头复制粘贴就是——这就是本地学习的最大优势。</p>
 
   <details><summary>练习 1 · 把点改成红色、变大一点</summary><div class="dbody">
@@ -482,7 +592,7 @@ chart.setOption({
   <h2 class="ch"><span class="num">3</span>常见问题</h2>
   <div class="ch-desc">踩坑了先看这里，90% 的问题都在下面</div>
 
-  <details><summary>打开网页，地图是空白的？</summary><div class="dbody">最常见原因：你是<strong>双击直接打开</strong>的（地址栏是 <code>file://</code> 开头）。<code>file://</code> 下浏览器禁止 fetch 本地文件，数据加载失败。按 <a href="#s25">2.5 节</a> 用 Live Server 或 <code>python3 -m http.server</code> 走 <code>http://</code> 访问即可。判断方法：按 F12 打开控制台，看到红色 CORS / fetch 报错就是这个问题。</div></details>
+  <details><summary>打开网页，地图是空白的？</summary><div class="dbody">最常见原因：你是<strong>双击直接打开</strong>的（地址栏是 <code>file://</code> 开头）。<code>file://</code> 下浏览器禁止 fetch 本地文件，数据加载失败。按 <a href="#s26">2.6 节</a> 用 Live Server 或 <code>python3 -m http.server</code> 走 <code>http://</code> 访问即可。判断方法：按 F12 打开控制台，看到红色 CORS / fetch 报错就是这个问题。</div></details>
 
   <details><summary>控制台报「echarts is not defined」？</summary><div class="dbody">ECharts 的 CDN 没加载成功（断网、或网络访问 jsdelivr 慢）。刷新重试；仍不行就把 echarts.min.js <a href="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js" target="_blank">下载</a>到文件夹里，引用改成 <code>&lt;script src="echarts.min.js"&gt;</code>。</div></details>
 
@@ -515,14 +625,22 @@ function countBy(points, idx, names){
   return names.map((n,i)=>({name:n, value:c[i]})).filter(x=>x.value>0);
 }
 
-fetch('poi_sim.json').then(r=>r.json()).then(d=>{
+const CHARTS = [];
+function addChart(id){ const c = echarts.init(document.getElementById(id)); CHARTS.push(c); return c; }
+const BASE_GEO = {map:'china', roam:true, itemStyle:{areaColor:'#1b2436',borderColor:'#3a4659'}, emphasis:{itemStyle:{areaColor:'#243250'},label:{show:false}}, label:{show:false}};
+
+Promise.all([
+  fetch('poi_sim.json').then(r=>r.json()),
+  fetch('china_mainland.json').then(r=>r.json())
+]).then(([d, geo])=>{
+  echarts.registerMap('china', geo);
   const provData = countBy(d.points, 0, d.meta.provinces)
     .sort((a,b)=>b.value-a.value).slice(0,10).reverse();
   const catData  = countBy(d.points, 2, d.meta.cats).sort((a,b)=>b.value-a.value);
 
   const axisStyle = {axisLine:{lineStyle:{color:'#2a3448'}},axisLabel:{color:'#8b98ab',fontSize:11},splitLine:{lineStyle:{color:'#1b2436'}}};
 
-  echarts.init(document.getElementById('provChart')).setOption({
+  addChart('provChart').setOption({
     grid:{left:70,right:40,top:10,bottom:24},
     tooltip:{trigger:'axis',axisPointer:{type:'shadow'},formatter:p=>p[0].name+'：<b>'+p[0].value.toLocaleString()+'</b> 点（'+(p[0].value/d.meta.n*100).toFixed(1)+'%）'},
     xAxis:{type:'value',...axisStyle},
@@ -531,7 +649,7 @@ fetch('poi_sim.json').then(r=>r.json()).then(d=>{
       label:{show:true,position:'right',color:'#8b98ab',fontSize:11,formatter:p=>p.value.toLocaleString()}}]
   });
 
-  echarts.init(document.getElementById('catChart')).setOption({
+  addChart('catChart').setOption({
     grid:{left:80,right:56,top:10,bottom:24},
     tooltip:{trigger:'axis',axisPointer:{type:'shadow'},formatter:p=>p[0].name+'：<b>'+p[0].value.toLocaleString()+'</b> 点（'+(p[0].value/d.meta.n*100).toFixed(1)+'%）'},
     xAxis:{type:'value',...axisStyle},
@@ -540,12 +658,39 @@ fetch('poi_sim.json').then(r=>r.json()).then(d=>{
       label:{show:true,position:'right',color:'#8b98ab',fontSize:11,formatter:p=>p.value.toLocaleString()}}]
   });
 
-  window.addEventListener('resize',()=>{echarts.getInstanceByDom(document.getElementById('provChart'))?.resize();echarts.getInstanceByDom(document.getElementById('catChart'))?.resize();});
+  /* --- 地图演示：1.4 空间分布 / 2.3 mini 效果 / 2.5 三步进阶 --- */
+  const rich  = d.points.map(p=>({name:p[1], value:[p[3], p[4], p[1]+' · '+d.meta.cats[p[2]]]}));
+  const plain = d.points.map(p=>[p[3], p[4]]);
+
+  // 1.4 空间分布：完整效果（可缩放、拖拽、悬停看详情）
+  addChart('mapCh1').setOption({
+    tooltip:{formatter:p=>'<b>'+p.data.name+'</b><br>'+p.data.value[2]},
+    geo:BASE_GEO,
+    series:[{type:'scatter',coordinateSystem:'geo',data:rich,symbolSize:3,itemStyle:{color:'#58a6ff',opacity:.7},emphasis:{itemStyle:{color:'#ff6a3d'}}}]
+  });
+
+  // 2.3 mini.html 的运行效果（与那 20 行代码完全一致，默认浅灰配色）
+  addChart('demoMini').setOption({
+    geo:{map:'china',roam:true},
+    series:[{type:'scatter',coordinateSystem:'geo',data:plain,symbolSize:4,itemStyle:{color:'#58a6ff',opacity:.7}}]
+  });
+
+  // 2.5 三步进阶
+  addChart('stage1').setOption({geo:BASE_GEO, series:[]});
+  addChart('stage2').setOption({geo:BASE_GEO, series:[{type:'scatter',coordinateSystem:'geo',data:plain,symbolSize:4,itemStyle:{color:'#58a6ff',opacity:.7}}]});
+  addChart('stage3').setOption({
+    tooltip:{formatter:p=>'<b>'+p.data.name+'</b><br>'+p.data.value[2]},
+    geo:BASE_GEO,
+    series:[{type:'scatter',coordinateSystem:'geo',data:rich,symbolSize:4,itemStyle:{color:'#58a6ff',opacity:.7},emphasis:{itemStyle:{color:'#ff6a3d'}}}]
+  });
+
+  window.addEventListener('resize',()=>CHARTS.forEach(c=>c.resize()));
 }).catch(()=>{
-  document.getElementById('provChart').style.display='none';
-  document.getElementById('catChart').style.display='none';
-  document.getElementById('provErr').style.display='flex';
-  document.getElementById('catErr').style.display='flex';
+  ['provChart','catChart'].forEach(id=>{const el=document.getElementById(id); if(el) el.style.display='none';});
+  ['provErr','catErr'].forEach(id=>{const el=document.getElementById(id); if(el) el.style.display='flex';});
+  ['mapCh1','demoMini','stage1','stage2','stage3'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.innerHTML='<div class="chart-err" style="display:flex">演示加载失败——请按 <a href="#s26">2.6 节</a> 通过本地服务访问本页。</div>';
+  });
 });
 
 /* ============ 2. 代码块复制按钮 ============ */

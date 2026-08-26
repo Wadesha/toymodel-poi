@@ -7,7 +7,7 @@
 ## 页面
 
 - **[index.html](index.html)** — 交互式全国模拟 POI 地图（分类/省份/密度可筛选）
-- **[tutorial.html](tutorial.html)** — 零基础入门教程：分析结果解读 + 从零复刻与 GitHub Pages 部署跟做指南
+- **[tutorial.html](tutorial.html)** — 零基础入门教程：分析结果解读（含可交互地图展示）+ 地图三步实现拆解 + 从零复刻与 GitHub Pages 部署跟做指南
 
 ## 数据
 
