@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>入门教程 · ToyModel 全国模拟 POI 可视化</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+<style>
+:root{
+  --bg:#0b0e14; --panel:#141a26; --panel2:#1b2436; --border:#2a3448;
+  --text:#e6edf3; --muted:#8b98ab; --brand:#58a6ff;
+  --green:#3fb950; --orange:#f0883e; --purple:#bc8cff; --pink:#ff7b72;
+  --code-bg:#0d1117; --code-border:#30363d;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{background:var(--bg);color:var(--text);font-family:"SF Pro Text","PingFang SC","Microsoft YaHei",system-ui,sans-serif;line-height:1.75;font-size:15px}
+
+/* ===== 顶部导航 ===== */
+.topnav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(11,14,20,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);height:52px;display:flex;align-items:center;padding:0 20px;gap:16px}
+.topnav .logo{font-weight:700;font-size:15px;color:var(--brand);white-space:nowrap}
+.topnav a{color:var(--muted);text-decoration:none;font-size:13px;white-space:nowrap}
+.topnav a:hover{color:var(--brand)}
+.topnav .spacer{flex:1}
+
+/* ===== 布局 ===== */
+.layout{display:flex;max-width:1280px;margin:0 auto;padding-top:52px}
+.toc{width:230px;flex-shrink:0;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;padding:28px 0 40px 20px;border-right:1px solid var(--border)}
+.toc-title{font-size:12px;color:var(--muted);letter-spacing:2px;margin-bottom:12px;padding-left:12px}
+.toc a{display:block;color:var(--muted);text-decoration:none;font-size:13px;padding:5px 12px;border-left:2px solid transparent;border-radius:0 6px 6px 0}
+.toc a:hover{color:var(--text)}
+.toc a.active{color:var(--brand);border-left-color:var(--brand);background:rgba(88,166,255,.08)}
+.toc a.sub2{padding-left:28px;font-size:12px}
+main{flex:1;min-width:0;padding:36px 44px 80px;max-width:900px;margin:0 auto}
+
+/* ===== 通用 ===== */
+section{margin-bottom:72px}
+h2.ch{display:flex;align-items:center;gap:12px;font-size:24px;font-weight:700;margin-bottom:6px;scroll-margin-top:70px}
+h2.ch .num{flex-shrink:0;width:36px;height:36px;border-radius:10px;background:rgba(88,166,255,.15);color:var(--brand);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700}
+.ch-desc{color:var(--muted);font-size:14px;margin-bottom:26px;padding-left:48px}
+h3{font-size:18px;font-weight:700;margin:36px 0 14px;padding-top:24px;border-top:1px dashed var(--border);scroll-margin-top:70px}
+h3:first-of-type{border-top:none;padding-top:0}
+h3 .tag{font-size:11px;font-weight:400;color:var(--brand);background:rgba(88,166,255,.12);padding:2px 8px;border-radius:99px;vertical-align:2px;margin-left:8px}
+p{margin:10px 0}
+ul,ol{padding-left:22px;margin:10px 0}
+li{margin:5px 0}
+a{color:var(--brand)}
+strong{color:#fff}
+em{color:var(--purple);font-style:normal}
+code{font-family:ui-monospace,"SF Mono",Consolas,Menlo,monospace;font-size:.88em;background:var(--panel2);border:1px solid var(--border);border-radius:5px;padding:1px 6px;color:#79c0ff;white-space:nowrap}
+
+/* ===== Hero ===== */
+.hero{padding:34px 32px;background:linear-gradient(135deg,rgba(88,166,255,.10),rgba(188,140,255,.05)),var(--panel);border:1px solid var(--border);border-radius:16px;margin-bottom:44px}
+.hero h1{font-size:28px;font-weight:800;margin-bottom:8px}
+.hero .sub{color:var(--muted);font-size:15px;margin-bottom:20px}
+.hero-badges{display:flex;gap:10px;flex-wrap:wrap}
+.hbadge{background:var(--panel2);border:1px solid var(--border);border-radius:99px;padding:5px 14px;font-size:12.5px;color:var(--text)}
+.hbadge b{color:var(--brand)}
+.hero-cta{margin-top:22px;display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-block;text-decoration:none;font-size:14px;padding:9px 20px;border-radius:10px;font-weight:600}
+.btn-primary{background:var(--brand);color:#0b0e14}
+.btn-ghost{border:1px solid var(--border);color:var(--text)}
+
+/* ===== 卡片 / 表格 ===== */
+.card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin:16px 0}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:18px 0}
+.stat{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px 18px}
+.stat b{display:block;font-size:24px;color:var(--brand);font-variant-numeric:tabular-nums}
+.stat span{color:var(--muted);font-size:12.5px}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px}
+th,td{border:1px solid var(--border);padding:8px 12px;text-align:left;vertical-align:top}
+th{background:var(--panel2);color:var(--text);font-weight:600;white-space:nowrap}
+td{color:var(--muted)}
+td:first-child{color:var(--text);white-space:nowrap}
+
+/* ===== 流程图 ===== */
+.flow{display:flex;align-items:stretch;gap:0;margin:20px 0;flex-wrap:wrap}
+.flow-node{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px 16px;text-align:center;flex:1;min-width:130px}
+.flow-node b{display:block;font-size:14px;color:var(--brand);margin-bottom:3px}
+.flow-node span{font-size:12px;color:var(--muted);display:block;line-height:1.5}
+.flow-arrow{display:flex;align-items:center;padding:0 10px;color:var(--muted);font-size:18px}
+
+/* ===== 代码块 ===== */
+.code{background:var(--code-bg);border:1px solid var(--code-border);border-radius:10px;margin:16px 0;overflow:hidden}
+.code-head{display:flex;align-items:center;justify-content:space-between;background:#161b22;border-bottom:1px solid var(--code-border);padding:6px 8px 6px 14px}
+.code-head .fn{font-family:ui-monospace,Consolas,monospace;font-size:12px;color:var(--muted)}
+.copy-btn{background:var(--panel2);border:1px solid var(--border);color:var(--muted);font-size:12px;padding:3px 12px;border-radius:6px;cursor:pointer}
+.copy-btn:hover{color:var(--brand);border-color:var(--brand)}
+.copy-btn.ok{color:var(--green);border-color:var(--green)}
+.code pre{padding:14px 16px;overflow-x:auto;font-family:ui-monospace,"SF Mono",Consolas,Menlo,monospace;font-size:13px;line-height:1.7;color:#c9d1d9}
+.code pre .cm{color:#7ee787}    /* 注释 */
+.code pre .st{color:#a5d6ff}    /* 字符串 */
+.code pre .kw{color:#ff7b72}    /* 关键字 */
+
+/* ===== 提示框 ===== */
+.callout{border-radius:10px;padding:13px 16px;margin:16px 0;font-size:14px;border:1px solid;border-left-width:4px}
+.callout .ct{font-weight:700;display:block;margin-bottom:3px}
+.callout.info{background:rgba(88,166,255,.07);border-color:rgba(88,166,255,.35);border-left-color:var(--brand)}
+.callout.warn{background:rgba(240,136,62,.07);border-color:rgba(240,136,62,.35);border-left-color:var(--orange)}
+.callout.ok{background:rgba(63,185,80,.07);border-color:rgba(63,185,80,.35);border-left-color:var(--green)}
+.callout.tip{background:rgba(188,140,255,.07);border-color:rgba(188,140,255,.35);border-left-color:var(--purple)}
+.callout code{white-space:normal}
+
+/* ===== 图表 ===== */
+.chart-panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px;margin:16px 0}
+.chart-panel .cp-title{font-size:14px;font-weight:600;margin-bottom:4px}
+.chart-panel .cp-sub{font-size:12px;color:var(--muted);margin-bottom:8px}
+.chart{width:100%;height:400px}
+.chart-err{display:flex;align-items:center;justify-content:center;height:300px;color:var(--muted);font-size:14px;text-align:center;padding:0 20px}
+
+/* ===== 结论 ===== */
+.findings{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:6px 20px;margin:16px 0}
+.findings li{margin:10px 0}
+.findings .hl{color:var(--brand);font-weight:700}
+
+/* ===== 步骤 ===== */
+.step{display:flex;gap:16px;margin:22px 0}
+.step-num{flex-shrink:0;width:30px;height:30px;border-radius:99px;background:var(--panel2);border:1px solid var(--border);color:var(--brand);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.step-body{flex:1;min-width:0;padding-top:3px}
+.step-body>.st{font-weight:700;font-size:15px}
+
+/* ===== FAQ / 练习 ===== */
+details{background:var(--panel);border:1px solid var(--border);border-radius:10px;margin:10px 0;overflow:hidden}
+summary{padding:13px 18px;cursor:pointer;font-weight:600;font-size:14px;list-style:none;display:flex;align-items:center;gap:10px;user-select:none}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"▸";color:var(--brand);transition:.2s}
+details[open] summary::before{transform:rotate(90deg)}
+details .dbody{padding:0 18px 16px 40px;color:var(--muted);font-size:14px}
+details .dbody code{white-space:normal}
+
+footer{margin-top:60px;padding-top:18px;border-top:1px solid var(--border);color:var(--muted);font-size:12.5px;line-height:2}
+
+@media (max-width:960px){
+  .toc{display:none}
+  main{padding:24px 18px 60px}
+  .hero{padding:24px 20px}
+  .ch-desc{padding-left:0}
+}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <span class="logo">ToyModel</span>
+  <a href="#ch0">入门教程</a>
+  <a href="index.html">← 返回地图</a>
+  <span class="spacer"></span>
+  <a href="https://github.com/wadesha/toymodel-poi" target="_blank">GitHub 仓库</a>
+</nav>
+
+<div class="layout">
+
+<aside class="toc">
+  <div class="toc-title">目录</div>
+  <a href="#ch0">0 · 开始之前</a>
+  <a href="#s01">这项目做了什么</a>
+  <a href="#s02">5 个名词一次搞懂</a>
+  <a href="#s03">整体流程</a>
+  <a href="#ch1">1 · 分析结果</a>
+  <a href="#s11">数据总览</a>
+  <a href="#s12">省份分布</a>
+  <a href="#s13">分类分布</a>
+  <a href="#ch2">2 · 实现方法（跟做）</a>
+  <a href="#s21">准备什么</a>
+  <a href="#s22">认识 3 个文件</a>
+  <a href="#s23">20 行代码跑起来</a>
+  <a href="#s24">逐行讲解</a>
+  <a href="#s25">本地运行</a>
+  <a href="#s26">发布上线</a>
+  <a href="#s27">完整版多了什么</a>
+  <a href="#s28">动手练习</a>
+  <a href="#ch3">3 · 常见问题</a>
+</aside>
+
+<main>
+
+<!-- ============ HERO ============ -->
+<div class="hero">
+  <h1>ToyModel 入门教程</h1>
+  <div class="sub">从零看懂并复刻一个「全国 POI 地图可视化」网站 —— 写给完全没写过代码的你</div>
+  <div class="hero-badges">
+    <span class="hbadge">⏱ <b>5 分钟</b> 看懂分析结果</span>
+    <span class="hbadge">🔨 <b>30 分钟</b> 亲手复刻上线</span>
+    <span class="hbadge">💰 <b>0 元</b> 全程免费</span>
+    <span class="hbadge">📦 <b>0 安装</b> 有浏览器就行</span>
+  </div>
+  <div class="hero-cta">
+    <a class="btn btn-primary" href="#ch0">从第 0 章开始 →</a>
+    <a class="btn btn-ghost" href="#ch1">直接看分析结果</a>
+  </div>
+</div>
+
+<!-- ============ 第 0 章 ============ -->
+<section id="ch0">
+  <h2 class="ch"><span class="num">0</span>开始之前</h2>
+  <div class="ch-desc">先花 5 分钟弄懂三个问题，后面的路会顺很多</div>
+
+  <h3 id="s01">0.1 这个项目做了什么？<span class="tag">一句话</span></h3>
+  <p>把 <strong>22,001 个模拟的「兴趣点」画在一张中国地图上</strong>，让它们可以按省份、按分类筛选查看。</p>
+  <div class="card">
+    <p><strong>什么是 POI？</strong> POI = Point of Interest（兴趣点）。地图上任何一个<strong>有名字的地点</strong>——一家餐厅、一所学校、一个地铁站——就是一个 POI。每个 POI 最核心的信息就是 3 样：<em>叫什么、在哪（经纬度）、属于哪类</em>。</p>
+    <p>本项目的数据是<strong>模拟生成</strong>的：坐标和名称是合成的，但「每个省多少点、每类多少点」的比例，来自 2013–2023 年全国 POI 数据湖的<strong>真实分布</strong>。所以它是一张「按真实比例尺缩小的中国 POI 全景图」，适合用来学习和验证可视化方案。</p>
+  </div>
+
+  <h3 id="s02">0.2 用了哪些技术？5 个名词一次搞懂<span class="tag">名词表</span></h3>
+  <table>
+    <tr><th>名词</th><th>一句话解释</th><th>在本项目中的角色</th></tr>
+    <tr><td><strong>HTML</strong></td><td>网页的「骨架」，一个文本文件，浏览器能读懂并画成页面</td><td><code>index.html</code> 就是网页本体，只有约 120 行</td></tr>
+    <tr><td><strong>ECharts</strong></td><td>开源图表库（百度开源，现在是 Apache 项目），告诉它数据，它负责画图</td><td>画中国地图轮廓 + 2 万多个散点</td></tr>
+    <tr><td><strong>JSON</strong></td><td>一种轻量的数据格式，人能读，程序也能读</td><td><code>poi_sim.json</code> 存 22,001 个点的数据</td></tr>
+    <tr><td><strong>GeoJSON</strong></td><td>JSON 的「地理特化版」，用坐标描述边界形状</td><td><code>china_mainland.json</code> 存 34 个省的边界轮廓</td></tr>
+    <tr><td><strong>GitHub Pages</strong></td><td>GitHub 提供的免费静态网站托管</td><td>把网页免费发布到公网，手机也能访问</td></tr>
+  </table>
+
+  <h3 id="s03">0.3 整体流程：数据怎么变成地图</h3>
+  <div class="flow">
+    <div class="flow-node"><b>📄 两份数据</b><span>poi_sim.json<br>(22,001 个点)<br>china_mainland.json<br>(省界轮廓)</span></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node"><b>🌐 浏览器打开</b><span>index.html<br>通过 HTTP 访问<br>(不是双击文件)</span></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node"><b>📊 ECharts 渲染</b><span>registerMap 注册地图<br>scatter 画散点<br>按经纬度定位</span></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node"><b>🖱 你来交互</b><span>按省/分类筛选<br>调密度<br>悬浮看点详情</span></div>
+  </div>
+  <div class="callout tip"><span class="ct">为什么这个方案适合入门？</span>整个项目<strong>没有编译、没有构建工具、没有后端</strong>——3 个文件放进一个文件夹就是一个完整网站。改一行代码，刷新浏览器立刻见效，非常适合边改边学。</div>
+</section>
+
+<!-- ============ 第 1 章 ============ -->
+<section id="ch1">
+  <h2 class="ch"><span class="num">1</span>分析结果</h2>
+  <div class="ch-desc">下面两张图不是贴图，是本页用页面里的代码现场算出来的——顺便教你怎么「做分析」</div>
+
+  <h3 id="s11">1.1 数据总览</h3>
+  <div class="stat-grid">
+    <div class="stat"><b>22,001</b><span>模拟 POI 总数（&lt;1MB）</span></div>
+    <div class="stat"><b>34</b><span>省级区域全覆盖</span></div>
+    <div class="stat"><b>17</b><span>标准分类（模拟覆盖 16 个）</span></div>
+    <div class="stat"><b>76.7°E~135°E</b><span>经度范围（纬度 18.4°N~54°N）</span></div>
+  </div>
+  <div class="callout info"><span class="ct">数据怎么读？</span>每条 POI 就是 5 个字段的数组：<code>[省份索引, 名称, 分类索引, 经度, 纬度]</code>。例如 <code>[0, "广告公司18", 4, 121.65, 31.25]</code> 表示：上海（索引 0）的一家公司企业（索引 4），位于东经 121.65°、北纬 31.25°。索引对应的名称存在 <code>meta</code> 里——这种「索引 + 对照表」写法是为了把文件压到 1MB 以内。</div>
+
+  <h3 id="s12">1.2 分析一：哪些省的点多？</h3>
+  <div class="chart-panel">
+    <div class="cp-title">省份 POI 数量 TOP 10</div>
+    <div class="cp-sub">统计方式：遍历 22,001 条记录，按省份索引累加计数（代码见下方）</div>
+    <div id="provChart" class="chart"></div>
+    <div id="provErr" class="chart-err" style="display:none">图表加载失败——你是不是直接双击打开的这个网页？<br>请按 <a href="#s25">2.5 节</a> 启动本地服务后再看。</div>
+  </div>
+
+  <div class="findings">
+    <ol>
+      <li><span class="hl">广东第一</span>：2,120 个点（9.6%），接近全国的十分之一。</li>
+      <li><span class="hl">TOP 6 合计约 42.7%</span>：广东、江苏、山东、浙江、河南、四川——约六分之一的省份占了四成多的点。</li>
+      <li><span class="hl">东南密、西北疏</span>：点位集中在前者，这是真实中国 POI 的分布规律（即「胡焕庸线」效应），模拟数据忠实还原了这一点。</li>
+    </ol>
+  </div>
+
+  <p>这张图是怎么算出来的？统计逻辑只有几行——<strong>「分组计数」是数据分析最基础的动作</strong>，Excel 的数据透视表、SQL 的 <code>GROUP BY</code>、代码里的累加，本质都是它：</p>
+  <div class="code"><div class="code-head"><span class="fn">统计省份分布（本页图表的真实代码）</span><button class="copy-btn">复制</button></div>
+<pre><span class="cm">// d.points 的每条记录: [省份索引, 名称, 分类索引, 经度, 纬度]</span>
+<span class="kw">const</span> provCount = {};              <span class="cm">// 1. 准备一个空容器 {省名: 数量}</span>
+d.points.forEach(p =&gt; {
+  provCount[p[0]] = (provCount[p[0]] || 0) + 1;  <span class="cm">// 2. 见一个加一个</span>
+});
+<span class="cm">// 3. 排序取前 10，交给 ECharts 画条形图</span></pre></div>
+
+  <h3 id="s13">1.3 分析二：都是些什么类型的点？</h3>
+  <div class="chart-panel">
+    <div class="cp-title">17 类 POI 的数量分布（模拟覆盖 16 类）</div>
+    <div class="cp-sub">同样的分组计数，只是这次按分类索引 p[2] 统计</div>
+    <div id="catChart" class="chart"></div>
+    <div id="catErr" class="chart-err" style="display:none">图表加载失败——请按 <a href="#s25">2.5 节</a> 通过本地服务访问本页。</div>
+  </div>
+
+  <div class="findings">
+    <ol>
+      <li><span class="hl">三巨头占近半</span>：购物（15.3%）+ 交通设施（14.8%）+ 地名地址（14.7%）≈ 44.8%。</li>
+      <li><span class="hl">典型的长尾分布</span>：头部少数类别占大头，尾部一堆小类别——金融 1.0%、住宿 0.9%、风景名胜 0.6%。「事件活动」类在本次模拟中未生成点位。这是 POI 数据的经典结构（近似幂律分布）。</li>
+      <li><span class="hl">含义</span>：真实世界里，与你「吃喝住行」相关的基础设施最密集；专业、低频的场所数量少但覆盖面广。</li>
+    </ol>
+  </div>
+
+  <div class="callout ok"><span class="ct">1.4 一句话总结分析结果</span>这是一张<strong>按真实分布比例生成的「缩小版」中国 POI 全景图</strong>：数量上广东领跑、东南沿海密集；结构上基础民生类占近半、专业类呈长尾。它验证了「模拟数据 + 轻量前端」足以承载真实数据的可视化原型——后续接真实数据时，只需替换 JSON 文件，页面代码一行不用改。</div>
+</section>
+
+<!-- ============ 第 2 章 ============ -->
+<section id="ch2">
+  <h2 class="ch"><span class="num">2</span>实现方法（跟做）</h2>
+  <div class="ch-desc">从空文件夹到「手机能访问的上线网站」，每一步都有预期效果，照着做即可</div>
+
+  <h3 id="s21">2.1 你需要准备什么</h3>
+  <table>
+    <tr><th>类别</th><th>清单</th><th>说明</th></tr>
+    <tr><td><strong>必需</strong></td><td>一台电脑 · 一个现代浏览器（Chrome/Edge）· 一个 GitHub 账号</td><td>GitHub 免费注册：<a href="https://github.com/signup" target="_blank">github.com/signup</a>，只需邮箱</td></tr>
+    <tr><td><strong>推荐</strong></td><td>VS Code（代码编辑器）</td><td><a href="https://code.visualstudio.com" target="_blank">code.visualstudio.com</a> 免费下载，装完一路下一步</td></tr>
+    <tr><td><strong>不需要</strong></td><td>服务器 · 数据库 · 付费软件 · 任何安装型编程环境</td><td>本地预览优先用 VS Code 插件方案（见 2.5），Python 只是备选</td></tr>
+  </table>
+
+  <h3 id="s22">2.2 认识 3 个文件<span class="tag">整个网站就这 3 个</span></h3>
+  <p>新建一个文件夹（比如 <code>toymodel-poi</code>），放 3 个文件进去。前两个从本仓库下载（GitHub 页面绿色 <code>Code</code> 按钮 → <code>Download ZIP</code>，解压即得）：</p>
+  <table>
+    <tr><th>文件</th><th>是什么</th><th>大小</th></tr>
+    <tr><td><code>poi_sim.json</code></td><td>数据：22,001 个点。每条 5 个字段：<code>[省份索引, 名称, 分类索引, 经度, 纬度]</code>，索引对照表在 <code>meta</code> 里</td><td>&lt;1MB</td></tr>
+    <tr><td><code>china_mainland.json</code></td><td>地图轮廓：34 个省级行政区边界的 GeoJSON（ECharts 官方格式）</td><td>约 1MB</td></tr>
+    <tr><td><code>index.html</code></td><td>网页本体：结构 + 样式 + 逻辑全在这一个文件（约 120 行）</td><td>几 KB</td></tr>
+  </table>
+  <p>打开 <code>poi_sim.json</code> 你会看到它分两部分：</p>
+  <div class="code"><div class="code-head"><span class="fn">poi_sim.json 的结构（示意）</span><button class="copy-btn">复制</button></div>
+<pre>{
+  <span class="st">"meta"</span>: {
+    <span class="st">"n"</span>: 22001,                        <span class="cm">// 点的总数</span>
+    <span class="st">"provinces"</span>: [<span class="st">"上海"</span>, <span class="st">"云南"</span>, ...],   <span class="cm">// 34 个省名（索引对照表）</span>
+    <span class="st">"cats"</span>: [<span class="st">"餐饮"</span>, <span class="st">"购物"</span>, ...]        <span class="cm">// 17 个分类名</span>
+  },
+  <span class="st">"points"</span>: [
+    [0, <span class="st">"广告公司18"</span>, 4, 121.65003, 31.25414],  <span class="cm">// 上海·公司企业</span>
+    [0, <span class="st">"培训中心76"</span>, 5, 121.25681, 30.86641],  <span class="cm">// 上海·教育文化</span>
+    ...                                <span class="cm">// 共 22,001 条</span>
+  ]
+}</pre></div>
+
+  <h3 id="s23">2.3 先跑起来：20 行核心代码<span class="tag">最小可用版</span></h3>
+  <p>别一上来就研究 120 行的完整版。先用下面的<strong>最小可用版</strong>跑通「数据 → 地图」，它只有 20 来行。在文件夹里新建 <code>mini.html</code>，粘贴保存：</p>
+  <div class="code"><div class="code-head"><span class="fn">mini.html — 最小可用版（可完整复制）</span><button class="copy-btn">复制</button></div>
+<pre>&lt;!DOCTYPE html&gt;
+&lt;html lang=<span class="st">"zh-CN"</span>&gt;
+&lt;head&gt;
+  &lt;meta charset=<span class="st">"UTF-8"</span>&gt;
+  &lt;title&gt;我的第一张 POI 地图&lt;/title&gt;
+  <span class="cm">&lt;!-- 第 1 步：引入 ECharts 库（从公共 CDN 加载，本地无需安装任何东西）--&gt;</span>
+  &lt;script src=<span class="st">"https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"</span>&gt;&lt;/script&gt;
+  &lt;style&gt;html,body,#map{height:100%;margin:0}&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  <span class="cm">&lt;!-- 第 2 步：放一个容器 div，地图将画在它里面 --&gt;</span>
+  &lt;div id=<span class="st">"map"</span>&gt;&lt;/div&gt;
+  &lt;script&gt;
+  <span class="cm">// 第 3 步：同时加载两份数据（点的数据 + 省界数据）</span>
+  Promise.all([
+    fetch(<span class="st">'poi_sim.json'</span>).then(r =&gt; r.json()),
+    fetch(<span class="st">'china_mainland.json'</span>).then(r =&gt; r.json())
+  ]).then(([poi, china]) =&gt; {
+    <span class="cm">// 第 4 步：把下载好的省界"注册"为一张名叫 china 的地图</span>
+    echarts.registerMap(<span class="st">'china'</span>, china);
+    <span class="cm">// 第 5 步：在容器里初始化图表</span>
+    <span class="kw">const</span> chart = echarts.init(document.getElementById(<span class="st">'map'</span>));
+    <span class="cm">// 第 6 步：把每个点转成 [经度, 纬度]（p[3] 是经度，p[4] 是纬度）</span>
+    <span class="kw">const</span> points = poi.points.map(p =&gt; [p[3], p[4]]);
+    <span class="cm">// 第 7 步：一张地图 + 一层散点，画！</span>
+    chart.setOption({
+      geo: { map: <span class="st">'china'</span>, roam: <span class="kw">true</span> },       <span class="cm">// roam:true 允许缩放拖动</span>
+      series: [{
+        type: <span class="st">'scatter'</span>,                    <span class="cm">// 散点图</span>
+        coordinateSystem: <span class="st">'geo'</span>,              <span class="cm">// 用经纬度定位</span>
+        data: points,
+        symbolSize: 4,
+        itemStyle: { color: <span class="st">'#58a6ff'</span>, opacity: .7 }
+      }]
+    });
+  });
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre></div>
+  <div class="callout warn"><span class="ct">⚠ 保存时的两个常见坑</span>① 编码必须是 <strong>UTF-8</strong>（VS Code 右下角可见，默认就是）；② 文件名后缀是 <code>.html</code> 不是 <code>.html.txt</code>（Windows 需在「查看」中勾选「文件扩展名」确认）。另外它必须和两个 json 文件<strong>放在同一个文件夹</strong>。</div>
+
+  <h3 id="s24">2.4 逐行讲解：这 20 行在干什么</h3>
+  <table>
+    <tr><th>代码</th><th>人话解释</th></tr>
+    <tr><td><code>&lt;script src="…echarts.min.js"&gt;</code></td><td>从 CDN（公共文件服务器）借来画图工具。等价于「装了 ECharts」，但本地什么都不用装</td></tr>
+    <tr><td><code>&lt;div id="map"&gt;</code></td><td>网页上的一个空盒子，指定 id，后面用名字找到它</td></tr>
+    <tr><td><code>fetch('poi_sim.json')</code></td><td>让浏览器「去隔壁拿文件」。fetch 返回的不是数据本身，是一个「正在路上的包裹」</td></tr>
+    <tr><td><code>.then(r =&gt; r.json())</code></td><td>包裹到了再拆——把文本解析成 JS 能用的对象。这是异步编程的最常见写法</td></tr>
+    <tr><td><code>Promise.all([...])</code></td><td>两份文件<strong>同时</strong>去拿，都到齐了再进 <code>.then()</code>，比排队拿快一倍</td></tr>
+    <tr><td><code>echarts.registerMap('china', …)</code></td><td>给省界数据起名叫 <code>'china'</code> 并登记入库，之后随时能用这个名字调取</td></tr>
+    <tr><td><code>echarts.init(el)</code></td><td>在 div 里铺画布，之后所有图都画在这块画布上</td></tr>
+    <tr><td><code>poi.points.map(p =&gt; [p[3], p[4]])</code></td><td>把 22,001 条记录各取第 4、5 列（索引 3、4），组装成 22,001 个 <code>[经度,纬度]</code></td></tr>
+    <tr><td><code>chart.setOption({...})</code></td><td>ECharts 是<strong>声明式</strong>的：你只管「描述」图长什么样（地图 + 散点 + 颜色），怎么画它负责。想改图？改完描述再 setOption 一次即可</td></tr>
+  </table>
+  <div class="callout ok"><span class="ct">✅ 检查点：看到什么算成功？</span>一张深色中国地图轮廓，上面铺满蓝色小点，滚轮可缩放、拖拽可平移。这就是全部核心原理了——完整版的筛选、统计只是在这 20 行外面「加壳」。</div>
+
+  <h3 id="s25">2.5 在本地跑起来<span class="tag">关键一步</span></h3>
+  <div class="callout warn"><span class="ct">⚠ 为什么不能直接双击 mini.html？</span>双击 = <code>file://</code> 协议。出于安全策略，浏览器在 <code>file://</code> 下<strong>禁止 fetch 本地文件</strong>，控制台（按 F12 打开）会报 CORS 错误，页面地图空白。必须通过 <code>http://</code> 访问——需要一个「本地小服务器」。下面三种任选其一：</div>
+
+  <div class="step"><div class="step-num">A</div><div class="step-body">
+    <div class="st">VS Code + Live Server 插件（零基础最推荐）</div>
+    <ol>
+      <li>VS Code 左侧扩展图标（四个方块）→ 搜索 <code>Live Server</code> → 安装（发布者 Ritwick Dey，下载量最大那个）</li>
+      <li>VS Code 打开你的文件夹（文件 → 打开文件夹）</li>
+      <li>右键 <code>mini.html</code> → <code>Open with Live Server</code></li>
+      <li>浏览器自动打开 <code>http://127.0.0.1:5500/mini.html</code>，地图出现 ✅</li>
+    </ol>
+    <p style="font-size:13px;color:var(--muted)">加分项：保存代码时页面自动刷新，改一行看一眼，学习体验极佳。</p>
+  </div></div>
+
+  <div class="step"><div class="step-num">B</div><div class="step-body">
+    <div class="st">Python 自带的超迷你服务器</div>
+    <div class="code"><div class="code-head"><span class="fn">终端（Mac: 终端 / Win: PowerShell），cd 进文件夹后执行</span><button class="copy-btn">复制</button></div>
+<pre><span class="cm"># Mac / Linux（系统自带 python3）</span>
+python3 -m http.server 8000
+
+<span class="cm"># Windows（装过 Python 的话）</span>
+py -m http.server 8000</pre></div>
+    <p>然后浏览器访问 <code>http://localhost:8000/mini.html</code>。关闭终端即关闭服务。</p>
+  </div></div>
+
+  <div class="step"><div class="step-num">C</div><div class="step-body">
+    <div class="st">装了 Node.js 的话</div>
+    <div class="code"><div class="code-head"><span class="fn">任意终端</span><button class="copy-btn">复制</button></div>
+<pre>npx serve .          <span class="cm"># 会给出一个可访问的地址，浏览器打开即可</span></pre></div>
+  </div></div>
+
+  <h3 id="s26">2.6 发布上线：让全世界访问你的网站<span class="tag">GitHub Pages</span></h3>
+  <p>两条路线任选。<strong>路线 1 全程点鼠标</strong>（零基础推荐）；路线 2 用 git 命令（以后会常用，可以下次再学）。</p>
+
+  <div class="card">
+    <p><strong>路线 1 · 网页上传（5 分钟）</strong></p>
+    <div class="step"><div class="step-num">1</div><div class="step-body"><div class="st">建仓库</div>登录 GitHub → 右上角 <code>+</code> → <code>New repository</code> → 名字填 <code>toymodel-poi</code>（可以自定，但要和后面网址对应）→ 选 <code>Public</code> → 点 <code>Create repository</code></div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-body"><div class="st">传文件</div>在新仓库页面点 <code>Add file</code> → <code>Upload files</code> → 把文件夹里的 <strong>3 个文件拖进去</strong>（index.html、poi_sim.json、china_mainland.json，想加 mini.html 也行）→ 页面底部 <code>Commit changes</code></div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-body"><div class="st">开 Pages</div>仓库页 <code>Settings</code> → 左侧 <code>Pages</code> → <code>Source</code> 选 <code>Deploy from a branch</code> → <code>Branch</code> 选 <code>main</code> 和 <code>/ (root)</code> → <code>Save</code></div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-body"><div class="st">访问</div>等 1~2 分钟刷新页面，顶部会出现绿色提示和网址：<br><code>https://你的用户名.github.io/toymodel-poi/</code> —— 手机开流量也能打开 ✅</div></div>
+  </div>
+
+  <div class="card">
+    <p><strong>路线 2 · git 命令（进阶）</strong></p>
+    <div class="code"><div class="code-head"><span class="fn">终端逐条执行</span><button class="copy-btn">复制</button></div>
+<pre>git clone https://github.com/你的用户名/toymodel-poi.git   <span class="cm"># 把仓库下载到本地</span>
+cd toymodel-poi                                            <span class="cm"># 进入文件夹</span>
+<span class="cm"># ...把 3 个文件放进来，本地预览确认没问题后：</span>
+git add index.html poi_sim.json china_mainland.json        <span class="cm"># 指定要上传的文件</span>
+git commit -m <span class="st">"我的 POI 地图"</span>                             <span class="cm"># 打包并说明</span>
+git push                                                   <span class="cm"># 推上 GitHub，Pages 自动更新</span></pre></div>
+    <p style="font-size:13px;color:var(--muted)">以后每次改动本地文件，重复 add → commit → push 三步，网站约 1 分钟后自动更新。</p>
+  </div>
+
+  <h3 id="s27">2.7 完整版 index.html 比 mini 版多了什么？</h3>
+  <table>
+    <tr><th>功能</th><th>实现思路</th></tr>
+    <tr><td><strong>筛选器</strong>（分类/省份下拉 + 密度滑块）</td><td>原生 <code>&lt;select&gt;</code>/<code>&lt;input&gt;</code>，切换时触发 <code>render()</code> 重新过滤数据并 <code>setOption</code>——「改条件 → 重画」，声明式库的好处在此</td></tr>
+    <tr><td><strong>密度滑块</strong></td><td>抽样降密：<code>count % step !== 0 则跳过</code>，点太多时只画 1/N，2 万点也流畅</td></tr>
+    <tr><td><strong>统计卡片</strong></td><td>筛选后同步更新「当前展示点」数字，就是分组计数的活学活用</td></tr>
+    <tr><td><strong>悬浮详情</strong></td><td>tooltip 的 <code>formatter</code> 回调：鼠标停在哪，就拼一段「名称 · 分类 · 省份」的 HTML 显示</td></tr>
+    <tr><td><strong>简称转全称</strong></td><td>数据里存「广东」，地图边界里叫「广东省」——用 <code>PROV_FULL</code> 对照表翻译</td></tr>
+  </table>
+
+  <h3 id="s28">2.8 动手练习（附答案）</h3>
+  <p style="color:var(--muted)">在 mini.html 上改，每题 2~5 分钟。改完保存刷新即可见效，改坏了重头复制粘贴就是——这就是本地学习的最大优势。</p>
+
+  <details><summary>练习 1 · 把点改成红色、变大一点</summary><div class="dbody">
+    <p>改 <code>series</code> 里的两个属性：</p>
+    <div class="code"><div class="code-head"><span class="fn">第 7 步中的两行</span><button class="copy-btn">复制</button></div>
+<pre>symbolSize: 6,
+itemStyle: { color: <span class="st">'#ff6a3d'</span>, opacity: .7 }</pre></div>
+    <p>体会：颜色是十六进制 RGB（红绿蓝各两位），<code>#ff6a3d</code> 就是橙红。去任何「颜色选择器」网页挑一个喜欢的色值贴进来。</p>
+  </div></details>
+
+  <details><summary>练习 2 · 只显示「餐饮」类的点</summary><div class="dbody">
+    <p>在 map 那里加一行过滤（餐饮的分类索引是 0，见 meta.cats）：</p>
+    <div class="code"><div class="code-head"><span class="fn">第 6 步改为</span><button class="copy-btn">复制</button></div>
+<pre><span class="kw">const</span> points = poi.points
+  .filter(p =&gt; p[2] === 0)      <span class="cm">// 只留分类索引为 0 的记录（餐饮）</span>
+  .map(p =&gt; [p[3], p[4]]);</pre></div>
+    <p>体会：<code>filter</code> 负责「留谁去谁」，<code>map</code> 负责「转成经纬度」。像流水线一样串起来——这就是完整版筛选器的雏形。</p>
+  </div></details>
+
+  <details><summary>练习 3 · 鼠标悬浮显示「名称 · 分类」</summary><div class="dbody">
+    <p>给 series 的每条数据带上名字，再配置 tooltip：</p>
+    <div class="code"><div class="code-head"><span class="fn">第 6、7 步改为</span><button class="copy-btn">复制</button></div>
+<pre><span class="kw">const</span> points = poi.points.map(p =&gt; ({
+  name: p[1], value: [p[3], p[4], p[1] + <span class="st">' · '</span> + poi.meta.cats[p[2]]]
+}));
+chart.setOption({
+  geo: { map: <span class="st">'china'</span>, roam: <span class="kw">true</span> },
+  tooltip: { formatter: p =&gt; <span class="st">'&lt;b&gt;'</span> + p.data.name + <span class="st">'&lt;/b&gt;&lt;br&gt;'</span> + p.data.value[2] },
+  series: [{ type: <span class="st">'scatter'</span>, coordinateSystem: <span class="st">'geo'</span>, data: points, symbolSize: 4 }]
+});</pre></div>
+    <p>体会：散点悬停能显示信息了。完整版只是多拼了省份名，并把这些做成可复用的 <code>render()</code> 函数。</p>
+  </div></details>
+</section>
+
+<!-- ============ 第 3 章 ============ -->
+<section id="ch3">
+  <h2 class="ch"><span class="num">3</span>常见问题</h2>
+  <div class="ch-desc">踩坑了先看这里，90% 的问题都在下面</div>
+
+  <details><summary>打开网页，地图是空白的？</summary><div class="dbody">最常见原因：你是<strong>双击直接打开</strong>的（地址栏是 <code>file://</code> 开头）。<code>file://</code> 下浏览器禁止 fetch 本地文件，数据加载失败。按 <a href="#s25">2.5 节</a> 用 Live Server 或 <code>python3 -m http.server</code> 走 <code>http://</code> 访问即可。判断方法：按 F12 打开控制台，看到红色 CORS / fetch 报错就是这个问题。</div></details>
+
+  <details><summary>控制台报「echarts is not defined」？</summary><div class="dbody">ECharts 的 CDN 没加载成功（断网、或网络访问 jsdelivr 慢）。刷新重试；仍不行就把 echarts.min.js <a href="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js" target="_blank">下载</a>到文件夹里，引用改成 <code>&lt;script src="echarts.min.js"&gt;</code>。</div></details>
+
+  <details><summary>数据是真实的吗？</summary><div class="dbody">不是。<strong>坐标与名称是合成的模拟数据</strong>，但「每省多少点、每类多少点」的比例基于 2013–2023 全国 POI 数据湖的真实分布生成。用途是可视化原型验证——先跑通方案，再换真数据。</div></details>
+
+  <details><summary>想换成真实数据怎么办？</summary><div class="dbody">保持同样的 JSON 结构生成 <code>poi_sim.json</code> 替换文件即可，页面代码一行不用改：两个字段必须保留（经纬度），索引对照表按你的分类/省份重做。数据量大时建议继续用「索引 + 对照表」压缩体积。</div></details>
+
+  <details><summary>页面能扛多少个点？</summary><div class="dbody">ECharts 散点在几万到几十万级别都没问题（本页 2.2 万点很轻松）。再往上可：① 用密度滑块同款思路降采样；② 换 ECharts GL 的 3D 散点；③ 服务端先做聚合（热力图/蜂窝图）。</div></details>
+
+  <details><summary>为什么要用索引存省份/分类，不直接存名字？</summary><div class="dbody">省体积。22,001 条记录里存一个数字 0 比存字符串「上海」省几十倍空间，文件从几 MB 压到 1MB 以内，浏览器加载快。对照表放 <code>meta</code> 里只存一份。这是数据工程里的常见手法（类似数据库的外键）。</div></details>
+
+  <details><summary>GitHub Pages 国内访问慢/打不开？</summary><div class="dbody">可以换成任意静态托管：Vercel、Netlify、Cloudflare Pages（都免费，把仓库连上去自动部署）；或者国内平台 Gitee Pages。本项目完全静态，放哪都能跑。</div></details>
+
+  <footer>
+    <strong>ToyModel · 全国模拟 POI 可视化</strong> —
+    <a href="index.html">返回地图</a> ·
+    <a href="https://github.com/wadesha/toymodel-poi" target="_blank">GitHub</a><br>
+    数据说明：本站为模拟演示，坐标与名称为合成数据，仅用于可视化原型验证；生成基于 2013–2023 全国 POI 数据湖实测的省规模占比与分类分布。
+  </footer>
+</section>
+
+</main>
+</div>
+
+<script>
+/* ============ 1. 分析结果图表（用本页代码现场统计真实数据） ============ */
+function countBy(points, idx, names){
+  const c = new Array(names.length).fill(0);
+  points.forEach(p => c[p[idx]]++);
+  return names.map((n,i)=>({name:n, value:c[i]})).filter(x=>x.value>0);
+}
+
+fetch('poi_sim.json').then(r=>r.json()).then(d=>{
+  const provData = countBy(d.points, 0, d.meta.provinces)
+    .sort((a,b)=>b.value-a.value).slice(0,10).reverse();
+  const catData  = countBy(d.points, 2, d.meta.cats).sort((a,b)=>b.value-a.value);
+
+  const axisStyle = {axisLine:{lineStyle:{color:'#2a3448'}},axisLabel:{color:'#8b98ab',fontSize:11},splitLine:{lineStyle:{color:'#1b2436'}}};
+
+  echarts.init(document.getElementById('provChart')).setOption({
+    grid:{left:70,right:40,top:10,bottom:24},
+    tooltip:{trigger:'axis',axisPointer:{type:'shadow'},formatter:p=>p[0].name+'：<b>'+p[0].value.toLocaleString()+'</b> 点（'+(p[0].value/d.meta.n*100).toFixed(1)+'%）'},
+    xAxis:{type:'value',...axisStyle},
+    yAxis:{type:'category',data:provData.map(x=>x.name),axisLine:{lineStyle:{color:'#2a3448'}},axisLabel:{color:'#e6edf3',fontSize:12}},
+    series:[{type:'bar',data:provData.map(x=>x.value),itemStyle:{color:'#58a6ff',borderRadius:[0,4,4,0]},
+      label:{show:true,position:'right',color:'#8b98ab',fontSize:11,formatter:p=>p.value.toLocaleString()}}]
+  });
+
+  echarts.init(document.getElementById('catChart')).setOption({
+    grid:{left:80,right:56,top:10,bottom:24},
+    tooltip:{trigger:'axis',axisPointer:{type:'shadow'},formatter:p=>p[0].name+'：<b>'+p[0].value.toLocaleString()+'</b> 点（'+(p[0].value/d.meta.n*100).toFixed(1)+'%）'},
+    xAxis:{type:'value',...axisStyle},
+    yAxis:{type:'category',data:catData.map(x=>x.name).reverse(),axisLine:{lineStyle:{color:'#2a3448'}},axisLabel:{color:'#e6edf3',fontSize:12}},
+    series:[{type:'bar',data:catData.map(x=>x.value).reverse(),itemStyle:{color:'#bc8cff',borderRadius:[0,4,4,0]},
+      label:{show:true,position:'right',color:'#8b98ab',fontSize:11,formatter:p=>p.value.toLocaleString()}}]
+  });
+
+  window.addEventListener('resize',()=>{echarts.getInstanceByDom(document.getElementById('provChart'))?.resize();echarts.getInstanceByDom(document.getElementById('catChart'))?.resize();});
+}).catch(()=>{
+  document.getElementById('provChart').style.display='none';
+  document.getElementById('catChart').style.display='none';
+  document.getElementById('provErr').style.display='flex';
+  document.getElementById('catErr').style.display='flex';
+});
+
+/* ============ 2. 代码块复制按钮 ============ */
+document.querySelectorAll('.code').forEach(box=>{
+  const btn = box.querySelector('.copy-btn');
+  btn.addEventListener('click',()=>{
+    const text = box.querySelector('pre').innerText;
+    (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject())
+      .then(()=>flash()).catch(()=>{  /* 旧浏览器降级 */
+        const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();
+        document.execCommand('copy');ta.remove();flash();
+      });
+    function flash(){btn.textContent='已复制 ✓';btn.classList.add('ok');setTimeout(()=>{btn.textContent='复制';btn.classList.remove('ok')},1600);}
+  });
+});
+
+/* ============ 3. 目录滚动高亮 ============ */
+const tocLinks = document.querySelectorAll('.toc a');
+const secs = [...document.querySelectorAll('section h2.ch, h3[id]')];
+const spy = new IntersectionObserver(es=>{
+  es.forEach(e=>{
+    if(e.isIntersecting){
+      tocLinks.forEach(a=>a.classList.toggle('active', a.getAttribute('href')==='#'+e.target.id));
+    }
+  });
+},{rootMargin:'-15% 0px -70% 0px'});
+secs.forEach(s=>spy.observe(document.getElementById(s.id)||s));
+</script>
+</body>
+</html>
